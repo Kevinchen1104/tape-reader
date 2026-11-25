@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f4eddf"><title>Tape Reader</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <header><h1>Tape Reader</h1><button class="text-link" id="help">How it works</button></header>
+  <p class="intro">Write a message in sound. See what survives the tape.</p>
+  <section class="monitor" aria-labelledby="scope-heading">
+    <div class="monitor-head"><h2 id="scope-heading">Signal monitor</h2><span>300 baud</span></div>
+    <canvas id="scope" aria-label="Waveform of the selected byte. The bit values beneath it give the same information in text."></canvas>
+    <div id="bitrow" aria-label="Bits read in transmission order"></div>
+    <div class="toolbar"><button class="play" id="play">▶ Play tape</button><button id="save">Download WAV</button>
+      <label class="selector">Inspect byte <select id="inspect"></select></label></div>
+  </section>
+  <div class="columns">
+    <section class="record"><h2>Record</h2>
+      <label class="sr" for="message">Message, 1 to 32 printable ASCII characters</label>
+      <input id="message" maxlength="32" value="HELLO TAPE" autocomplete="off" spellcheck="false" aria-describedby="error">
+      <div id="error" role="status"></div>
+      <div class="knob"><label for="noise">Noise</label><input type="range" id="noise" min="0" max="100" value="0"><output for="noise" id="noise-out">0%</output></div>
+      <div class="knob"><label for="drop">Dropout</label><input type="range" id="drop" min="0" max="160" value="0"><output for="drop" id="drop-out">0 ms</output></div>
+      <div class="presets"><button id="clean">Clean tape</button><button id="damaged">Damaged tape</button></div>
+    </section>
+    <section class="readback" aria-labelledby="result-heading"><h2 id="result-heading">Readback</h2>
+      <p id="decoded" aria-label="Decoded message"></p><p id="summary" role="status"></p>
+      <div id="bytes" aria-label="Inspect a received byte"></div>
+    </section>
+  </div>
+  <dialog id="guide" aria-labelledby="guide-heading">
+    <h2 id="guide-heading">How it works</h2>
+    <p>Early computers stored data on cassette as sound. Here, a zero is four cycles at 1,200 Hz. A one is eight cycles at 2,400 Hz. Both last 1/300 second.</p>
+    <p>Each character travels as a start bit, eight data bits (least significant first), and two stop bits. Click a byte to see those eleven windows on the scope.</p>
+    <p>The receiver measures the strength of both pitches in each window. A weak or ambiguous tone, or invalid framing, produces an unreadable byte, shown as □. A confidently decoded but different byte counts as a mismatch. The original message is used only for the recovery score.</p>
+    <p>Try <strong>Damaged tape</strong>. The gap removes part of the signal near its center. Click an unreadable byte to inspect it, then move Dropout back to zero. Noise mixes a repeatable hiss into the samples.</p>
+    <p>This classroom receiver uses a known bit clock and frame alignment. The WAV saves the full recording as 16-bit audio, including any damage and the leader and trailer tones.</p>
+    <button id="close-help">Back to tape</button>
+  </dialog>
+</main>
+<script src="tape.js"></script><script src="app.js"></script>
+</body></html>
